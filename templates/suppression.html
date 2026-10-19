@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Do-not-contact list</h1>
+<p class="muted">Emails here are excluded from discovery and can never be sent to.</p>
+
+<form method="post" action="{{ url_for('suppression') }}" class="card inline">
+  <input type="email" name="email" placeholder="email to suppress" required>
+  <button type="submit" class="primary">Add</button>
+</form>
+
+<section class="card">
+  {% if rows %}
+  <table>
+    <thead><tr><th>Email</th><th>Reason</th><th>Added (UTC)</th></tr></thead>
+    <tbody>
+      {% for r in rows %}
+      <tr><td>{{ r.email }}</td><td>{{ r.reason }}</td><td>{{ r.added_at }}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="muted">Empty.</p>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="review-head">
+  <h1>Review &amp; Send</h1>
+  <form method="post" action="{{ url_for('send_approved') }}"
+        onsubmit="return confirm('Send to ALL approved merchants now?');">
+    <button type="submit" class="primary">Send all approved</button>
+  </form>
+</div>
+<p class="muted">Edit the address and message, approve, then send. Nothing goes out until you press Send.</p>
+
+{% if not rows %}
+  <p class="muted">No merchants yet. <a href="{{ url_for('dashboard') }}">Run a search</a> to get started.</p>
+{% endif %}
+
+{% for row in rows %}
+{% set m = row.merchant %}
+{% set d = row.draft %}
+<section class="card merchant status-{{ m.status }}">
+  <div class="merchant-head">
+    <div>
+      <h3>{{ m.name }} <span class="badge badge-{{ m.status }}">{{ m.status }}</span></h3>
+      <p class="muted">
+        {{ m.category or 'business' }}
+        {% if m.website %}· <a href="{{ m.website }}" target="_blank" rel="noopener">website</a>{% endif %}
+      </p>
+    </div>
+  </div>
+
+  <form method="post" action="{{ url_for('save_merchant', merchant_id=m.id) }}" class="merchant-form">
+    <label>To (email)
+      <input type="email" name="email" value="{{ m.email or '' }}"
+             placeholder="no email found — enter one manually">
+    </label>
+    <label>Subject
+      <input type="text" name="subject" value="{{ d.subject if d else '' }}">
+    </label>
+    <label>Message
+      <textarea name="body" rows="9">{{ d.body if d else '' }}</textarea>
+    </label>
+    <p class="hint">An opt-out line and your postal address are added automatically on send.</p>
+    <div class="actions">
+      <button type="submit">Save changes</button>
+    </div>
+  </form>
+
+  <div class="actions row-actions">
+    <form method="post" action="{{ url_for('approve', merchant_id=m.id) }}">
+      <button type="submit" class="ok-btn">Approve</button>
+    </form>
+    <form method="post" action="{{ url_for('send_one', merchant_id=m.id) }}"
+          onsubmit="return confirm('Send this email now?');">
+      <button type="submit" class="primary">Send now</button>
+    </form>
+    <form method="post" action="{{ url_for('regenerate', merchant_id=m.id) }}">
+      <button type="submit">Regenerate draft</button>
+    </form>
+    <form method="post" action="{{ url_for('skip', merchant_id=m.id) }}">
+      <button type="submit">Skip</button>
+    </form>
+    <form method="post" action="{{ url_for('suppress', merchant_id=m.id) }}"
+          onsubmit="return confirm('Add this email to the do-not-contact list?');">
+      <button type="submit" class="danger">Do not contact</button>
+    </form>
+  </div>
+</section>
+{% endfor %}
+{% endblock %}

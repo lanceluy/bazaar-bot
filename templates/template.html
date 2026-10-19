@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Invitation template</h1>
+<p class="muted">
+  Edit the message sent to each merchant. The first line beginning with
+  <code>Subject:</code> becomes the email subject.
+</p>
+<p class="hint">
+  Available placeholders:
+  <code>{merchant_name}</code>, <code>{merchant_category}</code>,
+  <code>{event_name}</code>, <code>{event_date}</code>,
+  <code>{event_location}</code>, <code>{event_details_url}</code>,
+  <code>{organizer_name}</code>
+</p>
+
+<form method="post" action="{{ url_for('template_editor') }}" class="card">
+  <textarea name="template" rows="18" class="mono">{{ template_text }}</textarea>
+  <div class="actions">
+    <button type="submit" class="primary">Save template</button>
+  </div>
+</form>
+{% endblock %}

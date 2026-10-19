@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Find merchants for {{ event.event_name }}</h1>
+<p class="muted">{{ event.event_date }} · {{ event.event_location }}</p>
+
+{% if discovery_problems %}
+  <div class="flash flash-error">
+    Discovery disabled: {{ discovery_problems | join('; ') }}. Set it in your .env file.
+  </div>
+{% endif %}
+{% if email_problems %}
+  <div class="flash flash-warn">
+    Sending disabled: {{ email_problems | join('; ') }}. You can still discover and draft.
+  </div>
+{% endif %}
+
+<section class="card">
+  <h2>Search</h2>
+  <form method="post" action="{{ url_for('discover') }}" class="grid">
+    <label>What kind of merchants?
+      <input type="text" name="query" placeholder="e.g. craft shops, bakeries, jewelers" required>
+    </label>
+    <label>Location
+      <input type="text" name="location" placeholder="e.g. Austin, TX">
+    </label>
+    <label>Max results
+      <input type="number" name="max_results" value="20" min="1" max="20">
+    </label>
+    <label class="checkbox">
+      <input type="checkbox" name="find_emails" checked>
+      Try to find a contact email from each website (slower)
+    </label>
+    <button type="submit" {% if discovery_problems %}disabled{% endif %}>Search &amp; draft</button>
+  </form>
+</section>
+
+<section class="card">
+  <h2>Pipeline</h2>
+  <div class="counts">
+    {% for key in ['found','drafted','approved','sent','failed','skipped'] %}
+      <div class="count"><span class="n">{{ counts.get(key, 0) }}</span><span class="lbl">{{ key }}</span></div>
+    {% endfor %}
+  </div>
+  <a class="btn" href="{{ url_for('review') }}">Go to Review &amp; Send →</a>
+</section>
+
+<section class="card">
+  <h2>Recent sends</h2>
+  {% if recent %}
+  <table>
+    <thead><tr><th>When (UTC)</th><th>Merchant</th><th>Email</th><th>Result</th></tr></thead>
+    <tbody>
+      {% for r in recent %}
+      <tr>
+        <td>{{ r.sent_at }}</td>
+        <td>{{ r.merchant_name }}</td>
+        <td>{{ r.merchant_email }}</td>
+        <td>{% if r.result == 'ok' %}<span class="ok">sent</span>{% else %}<span class="bad" title="{{ r.error }}">failed</span>{% endif %}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="muted">No emails sent yet.</p>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,18 @@
+Subject: Invitation to be a merchant at {event_name}
+
+Hi {merchant_name} team,
+
+My name is {organizer_name} and I'm organizing {event_name}, taking place on
+{event_date} at {event_location}.
+
+We came across your business and thought you'd be a great fit for our lineup of
+vendors. We'd love to invite you to reserve a stall and sell to the hundreds of
+local visitors we expect that day.
+
+If you're interested, you can find full details and the sign-up form here:
+{event_details_url}
+
+I'm happy to answer any questions — just reply to this email.
+
+Warm regards,
+{organizer_name}
